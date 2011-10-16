@@ -1,0 +1,14 @@
+{# vim: set ts=2 sw=2 filetype=htmljinja: #}
+{% extends "layout.html" %}
+{% block body %}
+  <table>
+    <tr>
+      <th>Datum
+      <th>Value
+    {% for key, value in info.items() -%}
+      <tr>
+        <td>{{ key }}
+        <td>{{ value }}
+    {%- endfor %}
+  </table>
+{% endblock %}

@@ -1,0 +1,35 @@
+{# vim: set ts=2 sw=2 filetype=htmljinja: #}
+{% extends "layout.html" %}
+{% block body %}
+<section>
+  <h1>Requests</h1>
+  {% for entry in requests -%}
+    {% include "entry.html" %}
+  {% else %}
+    <p><i>No requests. Everything is hunky-dory.</i></p>
+  {%- endfor %}
+</section>
+<section>
+  <h1>Offers</h1>
+  {% for entry in offers -%}
+    {% include "entry.html" %}
+  {% else %}
+    <p><i>No offers. Why not step up?</i></p>
+  {%- endfor %}
+</section>
+<section>
+  <h1>Add an entry</h1>
+  <form>
+    <select>
+      <option value=request> I have a request </option>
+      <option value=offer> I have something to offer </option>
+    </select>
+    <p><label>Summary: <input name=summary></label></p>
+    <p>Details:
+      <textarea></textarea>
+    </p>
+    <p><label>Tags: <input name=tags></label></p>
+    <button>Add entry</button>
+  </form>
+</section>
+{% endblock %}

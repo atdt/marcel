@@ -1,0 +1,22 @@
+{# vim: set ts=2 sw=2 filetype=htmljinja: #}
+<article class=entry>
+  <header>
+    <h1>{{ entry.summary }}</h1>
+    <p><time pubdate datetime="{{ entry.datetime }}"></time></p>
+  </header>
+  <p>{{ entry.text }}</p>
+  <address>{{ entry.contactinfo }}</address>
+  <footer>
+    <dl>
+      <dt> User </dt>
+      <dd> {{ entry.user_id }} </dd>
+      <dt> Score </dt>
+      <dd> {{ entry.score }} </dd>
+    </dl>
+    <ul>
+      {% for tag in entry.tags -%}
+        <li>{{ tag }}</li>
+      {%- endfor %}
+    </ul>
+  </footer>
+</article>

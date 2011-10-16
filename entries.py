@@ -9,6 +9,7 @@ class EntryManager(object):
     def get(self, uid):
         item = redis.hgetall("marcel:%s:%s" % (self.type, uid))
         item['tags'] = redis.smembers("marcel:%s:%s:tags" % (self.type, uid))
+        item['type'] = self.type
         return item
 
     def all(self):
@@ -26,7 +27,7 @@ class EntryManager(object):
             items.append(item)
         return items
 
-    def add(self, mapping):
+    def add(self, **mapping):
         uid = redis.incr("marcel:%s:next_uid" % self.type)
         redis.zadd("marcel:%s" % self.type, uid, 0)
         tags = mapping.pop('tags')
@@ -38,5 +39,5 @@ class EntryManager(object):
         return redis.zincrby("marcel:%s" % self.type, uid, 1)
 
 
-requests = EntryManager("requests")
-offers = EntryManager("offers")
+requests = EntryManager("request")
+offers = EntryManager("offer")

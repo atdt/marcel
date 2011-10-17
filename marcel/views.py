@@ -10,14 +10,13 @@ from flask import (
 )
 
 from marcel import app, oid
-from marcel.models import offers, requests, add_dummy_data
+from marcel.models import User, offers, requests, add_dummy_data
 
 @app.before_request
 def lookup_current_user():
     g.user = None
     if 'openid' in session:
-        # get from redis g.user = 
-        g.user = session['openid']
+        g.user = User(openid=session['openid'])
 
 @app.route('/login', methods=['GET', 'POST'])
 @oid.loginhandler
@@ -27,7 +26,7 @@ def login():
     if request.method == 'POST':
         openid = request.form.get('openid')
         if openid:
-            return oid.try_login(openid, ask_for=['email'])
+            return oid.try_login(openid, ask_for=['email','fullname','nickname'])
     return render_template('login.html',
                             next=oid.get_next_url(),
                             error=oid.fetch_error())
@@ -42,12 +41,13 @@ def logout():
 
 @oid.after_login
 def after_login(resp):
-    user = resp.email
     session['openid'] = resp.identity_url
-    if user is not None:
-        flash('Successfully signed in')
-        g.user = user
-        return redirect(oid.get_next_url())
+    user = User(openid=resp.identity_url)
+    if not user.exists():    
+        user.set(**resp.__dict__)
+    flash('Successfully signed in')
+    g.user = user
+    return redirect(oid.get_next_url())
 
 @app.route('/requests')
 def show_requests():

@@ -1,6 +1,27 @@
 from marcel import redis
+from uuid import uuid5, NAMESPACE_URL
 
 # models
+class User(object):
+    def __init__(self, uuid=None, openid=None):
+        if uuid:
+            self.uuid = uuid
+            self.key = "marcel:user:%s" % uuid
+        elif openid:
+            self.uuid = uuid5(NAMESPACE_URL, openid)
+        else:
+            raise TypeError("Either a uuid or an openid is required")
+        self.key = "marcel:user:%s" % uuid
+
+    def exists(self):
+        return redis.exists(self.key)
+
+    def get(self):
+        return redis.hgetall(self.key)
+
+    def set(self, **kwargs):
+        redis.hmset(self.key, kwargs)
+
 class EntryManager(object):
     def __init__(self, type):
         self.type = type

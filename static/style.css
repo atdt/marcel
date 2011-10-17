@@ -40,3 +40,22 @@ article.request {
 article header h1 {
   font-size: 16px;
 }
+
+p[class^="flash"] {
+    background: none repeat scroll 0 0 #fffccf;
+    border: 1px solid #fffccf;
+    border-radius: 0 0 5px 5px;
+    color: #000000;
+    left: 50%;
+    margin-left: -200px;
+    padding: 5px;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    width: 400px;
+    z-index: 1000;
+}
+
+label small {
+    display: block;
+}

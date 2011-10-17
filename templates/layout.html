@@ -10,9 +10,14 @@
   <div id=container>
     <header>
       <h1>Marcel</h1>
-      <p>Marcel is a simply web application for co-ordinating mutual aid.</p>
+      <p>Marcel is a free and simple web application for co-ordinating mutual aid. <a href="https://github.com/atdt/marcel">Source on GitHub</a>.</p>
     </header>
     {% block body %}{% endblock %}
   </div>
+  <aside>
+    {% for category, msg in get_flashed_messages(with_categories=true) %}
+      <p class=flash-{{ category }}>{{ msg }}</p>
+    {% endfor %}
+  </aside>
 </body>
 </html>

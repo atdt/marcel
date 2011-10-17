@@ -1,5 +1,7 @@
+from flask import Flask, render_template, flash, g, session, request
+from flaskext.openid import OpenID
+from openidredis import RedisStore
 from redis import Redis
-from flask import Flask, render_template, flash
 
 # config
 DEBUG = True
@@ -12,6 +14,43 @@ app.config.from_object(__name__)
 app.config.from_envvar('MARCEL_SETTINGS', silent=True)
 
 redis = Redis(**app.config['REDIS'])
+
+oid = OpenID(app, store_factory=lambda: RedisStore(key_prefix="marcel:oid"))
+
+@app.before_request
+def lookup_current_user():
+    g.user = None
+    if 'openid' in session:
+        g.user = User.query.filter_by(openid=openid).first()
+
+@app.route('/login', methods=['GET', 'POST'])
+@oid.loginhandler
+def login():
+    if g.user is not None:
+        return redirect(oid.get_next_url())
+    if request.method == 'POST':
+        openid = request.form.get('openid')
+        if openid:
+            return oid.try_login(openid, ask_for=['email', 'fullname',
+                                                  'nickname'])
+    return render_template('login.html', next=oid.get_next_url(),
+                           error=oid.fetch_error())
+
+
+@app.route('/logout')
+def logout():
+    session.pop('openid', None)
+    flash('You were signed out')
+    return redirect(oid.get_next_url())
+
+@oid.after_login
+def after_login(resp):
+    # name=resp.fullname or resp.nickname, email=resp.email
+    session['openid'] = resp.identity_url
+    if user is not None:
+        flash('Successfully signed in')
+        g.user = user
+        return redirect(oid.get_next_url())
 
 # utils
 def reset():

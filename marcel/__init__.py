@@ -4,6 +4,7 @@ from redis import Redis, RedisError
 from flask import Flask
 
 # settings
+CSRF_ENABLED = True
 DEBUG = True
 SECRET_KEY = 'development key'
 REDIS = {

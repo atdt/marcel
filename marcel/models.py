@@ -6,12 +6,11 @@ class User(object):
     def __init__(self, uuid=None, openid=None):
         if uuid:
             self.uuid = uuid
-            self.key = "marcel:user:%s" % uuid
         elif openid:
             self.uuid = uuid5(NAMESPACE_URL, openid)
         else:
             raise TypeError("Either a uuid or an openid is required")
-        self.key = "marcel:user:%s" % uuid
+        self.key = "marcel:user:%s" % self.uuid
 
     def exists(self):
         return redis.exists(self.key)
@@ -50,12 +49,13 @@ class EntryManager(object):
     def add(self, **mapping):
         uid = redis.incr("marcel:%s:next_uid" % self.type)
         redis.zadd("marcel:%s" % self.type, uid, 0)
-        tags = mapping.pop('tags')
-        try:
-            redis.sadd("marcel:%s:%s:tags" % (self.type, uid), *tags)
-        except redis.error:
-            for tag in tags:
-                redis.sadd("marcel:%s:%s:tags" % (self.type, uid), tag)
+        tags = mapping.pop('tags', None)
+        if tags:
+            try:
+                redis.sadd("marcel:%s:%s:tags" % (self.type, uid), *tags)
+            except redis.error:
+                for tag in tags:
+                    redis.sadd("marcel:%s:%s:tags" % (self.type, uid), tag)
         redis.hmset("marcel:%s:%s" % (self.type, uid), mapping)
         return uid
 

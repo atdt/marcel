@@ -5,7 +5,7 @@ function resetapp () {
 }
 
 function epio-redis () {
-    epio run_command python -- -c "\"from bundle_config import config;from subprocess import call;r=config['redis'];call(['redis-cli','-h',r['host'],'-p',r['port'],'-a',r['password']])\""
+    epio run_command python -a marcel -- -c "\"from bundle_config import config;from subprocess import call;r=config['redis'];call(['redis-cli','-h',r['host'],'-p',r['port'],'-a',r['password']])\""
 }
 
 # activate virtualenv and chdir

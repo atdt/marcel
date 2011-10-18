@@ -9,8 +9,12 @@ from flask import (
     url_for
 )
 
+from flask.views import MethodView
+
 from marcel import app, oid
-from marcel.models import User, offers, requests, add_dummy_data
+from marcel.forms import EntryForm
+from marcel.models import User, offers, requests, add_dummy_data, EntryManager
+
 
 @app.before_request
 def lookup_current_user():
@@ -25,8 +29,9 @@ def login():
         return redirect(oid.get_next_url())
     if request.method == 'POST':
         openid = request.form.get('openid')
+        ask_for = ['email', 'fullname', 'nickname']  # from openid provider
         if openid:
-            return oid.try_login(openid, ask_for=['email','fullname','nickname'])
+            return oid.try_login(openid, ask_for=ask_for)
     return render_template('login.html',
                             next=oid.get_next_url(),
                             error=oid.fetch_error())
@@ -44,35 +49,39 @@ def after_login(resp):
     session['openid'] = resp.identity_url
     user = User(openid=resp.identity_url)
     if not user.exists():    
-        user.set(**resp.__dict__)
+        user.set(**{key:val for key, val in resp.__dict__.items() if val})
     flash('Successfully signed in')
     g.user = user
     return redirect(oid.get_next_url())
 
-@app.route('/requests')
-def show_requests():
-    return render_template('requests.html', requests=requests.all())
+class EntryAPI(MethodView):
+    def get(self):
+        form = EntryForm()
+        return render_template('show_entries.html',
+                               form=form,
+                               offers=offers.all(),
+                               requests=requests.all())
 
-@app.route('/offers')
-def show_offers():
-    return render_template('offers.html', offers=offers.all())
+    def post(self):
+        form = EntryForm()
+        if form.validate():
+            flash("Success")
+            entry_manager = EntryManager(form.entrytype.data)
+            entry_manager.add(
+                summary=form.summary.data,
+                details=form.details.data,
+                contact=form.contact.data
+            )
+        else:
+            flash("Error")
+        return render_template('show_entries.html',
+                               form=form,
+                               offers=offers.all(),
+                               requests=requests.all())
 
-@app.route('/')
-def show_entries():
-    return render_template('show_entries.html', offers=offers.all(),
-            requests=requests.all())
 
-@app.route('/add', methods=['POST'])
-def add_entry():
-    #if not session.get('logged_in'):
-    #    abort(401)
-    try:
-        tags = tags.split()
-        return str(request.form)
-    except KeyError:
-        pass
-    #requests.add(**request.form)
-    #flash("Request successfully posted")
+
+app.add_url_rule('/', view_func=EntryAPI.as_view('entries'))
 
 @app.route('/debug/dummy')
 def dummy():

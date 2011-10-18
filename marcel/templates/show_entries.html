@@ -19,20 +19,13 @@
 </section>
 <section>
   <h1>Add an entry</h1>
-  <form action="/add" method=post>
-    <select name=type required>
-      <option value=request> I have a request </option>
-      <option value=offer> I have something to offer </option>
-    </select>
-    <p><label>Summary: <input name=summary required>
-      <small>A concise summary of your request</small></label></p>
-    <p>Details:
-      <textarea name=details maxlength=1000></textarea>
-    </p>
-    <p><label>Contact Info: <input name=contact required>
-      <small>A phone number, email address, location, etc.</small></label></p>
-    <p><label>Tags: <input name=tags></label>
-      <small>Space-separated</small></label></p>
+  {% from "_formhelpers.html" import render_field %}
+  <form method=post>
+    {{ form.csrf }}
+    {{ render_field(form.entrytype) }}
+    {{ render_field(form.summary) }}
+    {{ render_field(form.details) }}
+    {{ render_field(form.contact) }}
     <button>Add entry</button>
   </form>
 </section>

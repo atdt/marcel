@@ -12,6 +12,8 @@ div#container header h1 {
 }
 
 body {
+  font-family: Georgia, serif;
+  font-size: 17px;
   margin: 0;
   padding: 0;
 }
@@ -31,10 +33,11 @@ article.entry {
   -moz-border-radius: 24px;
   border-radius: 24px;
   padding: 8px;
+  margin: 16px 0;
 }
 
 article.request {
-  background: #a7dbd8;
+  background: #deebf3;
 }
 
 article header h1 {
@@ -47,7 +50,7 @@ p[class^="flash"] {
     border-radius: 0 0 5px 5px;
     color: #000000;
     left: 50%;
-    margin-left: -200px;
+    margin: 0 0 0 -200px;
     padding: 5px;
     position: fixed;
     text-align: center;
@@ -58,4 +61,22 @@ p[class^="flash"] {
 
 label small {
     display: block;
+}
+
+input.openid {
+  background: url(openid.png) no-repeat 4px center;
+  padding-left: 26px;
+}
+
+input, textarea, select {
+  border: 1px solid black;
+  padding: 2px;
+  background: white;
+  font-family: 'Georgia', serif;
+  font-size: 17px;
+  color: #004b6b;
+}
+
+textarea {
+  width: 99%;
 }

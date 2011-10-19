@@ -1,5 +1,11 @@
-from marcel import redis
+from datetime import datetime
 from uuid import uuid5, NAMESPACE_URL
+
+import dateutil.parser
+from flask import session
+
+from marcel import redis
+
 
 # models
 class User(object):
@@ -12,6 +18,9 @@ class User(object):
             raise TypeError("Either a uuid or an openid is required")
         self.key = "marcel:user:%s" % self.uuid
 
+    def from_session(self):
+        return User(openid=session['openid'])
+
     def exists(self):
         return redis.exists(self.key)
 
@@ -21,14 +30,15 @@ class User(object):
     def set(self, **kwargs):
         redis.hmset(self.key, kwargs)
 
+
 class EntryManager(object):
     def __init__(self, type):
         self.type = type
 
     def get(self, uid):
         item = redis.hgetall("marcel:%s:%s" % (self.type, uid))
-        item['tags'] = redis.smembers("marcel:%s:%s:tags" % (self.type, uid))
         item['type'] = self.type
+        item['pubdate'] = dateutil.parser.parse(item['pubdate'])
         return item
 
     def all(self):
@@ -46,38 +56,29 @@ class EntryManager(object):
             items.append(item)
         return items
 
-    def add(self, **mapping):
+    def add(self, user, summary, details, contact_info):
+        pubdate = datetime.now().isoformat()
         uid = redis.incr("marcel:%s:next_uid" % self.type)
         redis.zadd("marcel:%s" % self.type, uid, 0)
-        tags = mapping.pop('tags', None)
-        if tags:
-            try:
-                redis.sadd("marcel:%s:%s:tags" % (self.type, uid), *tags)
-            except redis.error:
-                for tag in tags:
-                    redis.sadd("marcel:%s:%s:tags" % (self.type, uid), tag)
-        redis.hmset("marcel:%s:%s" % (self.type, uid), mapping)
+        redis.hmset("marcel:%s:%s" % (self.type, uid), {
+            'user': user.uuid,
+            'summary': summary,
+            'details': details,
+            'contact_info': contact_info,
+            'pubdate': pubdate
+        })
         return uid
+
+    #tags = mapping.pop('tags', None)
+    #if tags:
+    #    try:
+    #        redis.sadd("marcel:%s:%s:tags" % (self.type, uid), *tags)
+    #    except redis.error:
+    #        for tag in tags:
+    #            redis.sadd("marcel:%s:%s:tags" % (self.type, uid), tag)
 
     def upvote(self, uid):
         return redis.zincrby("marcel:%s" % self.type, uid, 1)
 
 requests = EntryManager("request")
 offers = EntryManager("offer")
-
-
-# utils
-def reset():
-    keys = redis.keys('marcel:*')
-    if keys: redis.delete(*keys)
-
-def add_dummy_data():
-    reset()
-    uid = requests.add(
-        user='Buffy',
-        text='Pebble expert needed for deconstructing pebbles',
-        tags=['pets', 'food'],
-        datetime='1996-01-01T12:05:25-02:00'
-    )
-    requests.upvote(uid)
-    requests.upvote(uid)

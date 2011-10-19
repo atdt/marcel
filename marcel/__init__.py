@@ -1,7 +1,12 @@
+from flask import Flask
+from flaskext.babel import Babel, format_datetime
+from flaskext.markdown import Markdown
 from flaskext.openid import OpenID
 from openidredis import RedisStore
 from redis import Redis, RedisError
-from flask import Flask
+
+from marcel.timesince import timesince
+
 
 # settings
 CSRF_ENABLED = True
@@ -21,13 +26,23 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.from_envvar('MARCEL_SETTINGS', silent=True)
 
+markdown = Markdown(app)
+
 redis = Redis(**app.config['REDIS'])
-redis.error = RedisError
+redis.error = RedisError  # for convenience's sake; use in try/except
 
-def redis_oid_store_factory():
-    return 
+redis_store_factory = lambda: RedisStore(key_prefix='marcel:oid', conn=redis)
+oid = OpenID(app, store_factory=redis_store_factory)
 
-oid = OpenID(app, store_factory=lambda: RedisStore(key_prefix="marcel:oid",
-                                                   conn=redis))
+babel = Babel(app)
+app.jinja_env.filters['format_datetime'] = format_datetime
+app.jinja_env.filters['timesince'] = timesince
+
+
+# utils
+def reset():
+    keys = redis.keys('marcel:*')
+    if keys:
+        redis.delete(*keys)
 
 import marcel.views

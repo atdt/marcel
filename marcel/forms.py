@@ -7,6 +7,7 @@ from marcel.models import EntryManager
 class EntryForm(Form):
     """ Represents an HTML form for a Marcel entry """
     entrytype = SelectField(
+        label='Type of Entry',
         choices=[('request', 'I have a request'),
                  ('offer', 'I have something to offer')]
     )
@@ -23,7 +24,7 @@ class EntryForm(Form):
         description="1000 characters max."
     )
 
-    contact = TextField(
+    contact_info = TextField(
         label='Contact Information',
         validators=[validators.Length(max=140), validators.Required()],
         description="A phone number, email address, location, etc."

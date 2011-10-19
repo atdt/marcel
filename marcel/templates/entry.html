@@ -2,21 +2,17 @@
 <article class="entry {{ entry.type }}">
   <header>
     <h1>{{ entry.summary }}</h1>
-    <p><time pubdate datetime="{{ entry.datetime }}"></time></p>
   </header>
-  <p>{{ entry.text }}</p>
-  <address>{{ entry.contactinfo }}</address>
+  <p>{{ entry.details }}</p>
+  <!-- {{ entry.user_id }} -->
   <footer>
     <dl>
-      <dt> User </dt>
-      <dd> {{ entry.user }} </dd>
       <dt> Score </dt>
       <dd> {{ entry.score }} </dd>
+      <dt> Contact Info
+      <dd> <address>{{ entry.contact_info }}</address> </dd>
+      <dt> Posted </dt>
+      <dd> <time pubdate datetime="{{ entry.pubdate.isoformat }}">Posted {{ entry.pubdate|timesince }} ago</time> </dd>
     </dl>
-    <ul>
-      {% for tag in entry.tags -%}
-        <li>{{ tag }}</li>
-      {%- endfor %}
-    </ul>
   </footer>
 </article>

@@ -13,7 +13,7 @@ from flask.views import MethodView
 
 from marcel import app, oid
 from marcel.forms import EntryForm
-from marcel.models import User, offers, requests, add_dummy_data, EntryManager
+from marcel.models import User, offers, requests, EntryManager
 
 
 @app.before_request
@@ -21,6 +21,7 @@ def lookup_current_user():
     g.user = None
     if 'openid' in session:
         g.user = User(openid=session['openid'])
+
 
 @app.route('/login', methods=['GET', 'POST'])
 @oid.loginhandler
@@ -48,11 +49,12 @@ def logout():
 def after_login(resp):
     session['openid'] = resp.identity_url
     user = User(openid=resp.identity_url)
-    if not user.exists():    
-        user.set(**{key:val for key, val in resp.__dict__.items() if val})
+    if not user.exists():
+        user.set(**{key: val for key, val in resp.__dict__.items() if val})
     flash('Successfully signed in')
     g.user = user
     return redirect(oid.get_next_url())
+
 
 class EntryAPI(MethodView):
     def get(self):
@@ -68,9 +70,10 @@ class EntryAPI(MethodView):
             flash("Success")
             entry_manager = EntryManager(form.entrytype.data)
             entry_manager.add(
+                user=g.user,
                 summary=form.summary.data,
                 details=form.details.data,
-                contact=form.contact.data
+                contact_info=form.contact_info.data
             )
         else:
             flash("Error")
@@ -80,17 +83,19 @@ class EntryAPI(MethodView):
                                requests=requests.all())
 
 
-
 app.add_url_rule('/', view_func=EntryAPI.as_view('entries'))
 
-@app.route('/debug/dummy')
-def dummy():
-    return str(add_dummy_data())
+
+@app.context_processor
+def inject_authentication_status():
+    return dict(authenticated=hasattr(g.user, 'uuid'))
+
 
 @app.route('/debug/alerts')
 def debug_alerts():
     flash("This seems to have worked!")
     return redirect('/')
+
 
 @app.route('/debug/redis')
 def redis_debug():

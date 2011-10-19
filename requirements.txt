@@ -2,3 +2,4 @@ Flask
 Flask-OpenID
 -e git+https://github.com/bbangert/openid-redis.git#egg=openid-redis
 Flask-WTF
+Flask-Markdown

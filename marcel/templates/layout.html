@@ -19,5 +19,8 @@
       <p class=flash-{{ category }}>{{ msg }}</p>
     {% endfor %}
   </aside>
+  {% if authenticated %}
+    <aside>You are logged in as {{ g.user.uuid }}</aside>
+  {% endif %}
 </body>
 </html>

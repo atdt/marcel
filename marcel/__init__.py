@@ -1,6 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+    Marcel
+    ------
+    A simple web app for facilitating the free exchange of goods and services.
+
+    :copyright: (c) 2011 By Ori Livneh
+    :license: BSD, see LICENSE for more details.
+"""
 from flask import Flask
 from flaskext.babel import Babel, format_datetime
-from flaskext.markdown import Markdown
 from flaskext.openid import OpenID
 from openidredis import RedisStore
 from redis import Redis, RedisError
@@ -26,11 +34,11 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.from_envvar('MARCEL_SETTINGS', silent=True)
 
-markdown = Markdown(app)
-
+# Configure a Redis connection instance
 redis = Redis(**app.config['REDIS'])
 redis.error = RedisError  # for convenience's sake; use in try/except
 
+# Set up flask-openid to use Redis as its datastore
 redis_store_factory = lambda: RedisStore(key_prefix='marcel:oid', conn=redis)
 oid = OpenID(app, store_factory=redis_store_factory)
 
@@ -39,15 +47,18 @@ app.config['OPENID_PROVIDERS'] = {
     'yahoo': 'https://yahoo.com/',
 }
 
+# Set up flask-babel and register dependent template filters
 babel = Babel(app)
 app.jinja_env.filters['format_datetime'] = format_datetime
 app.jinja_env.filters['timesince'] = timesince
 
 
-# utils
-def reset():
+def reset_app():
+    """ Reset Marcel by deleting all associated keys """
     keys = redis.keys('marcel:*')
     if keys:
         redis.delete(*keys)
 
+# Views must be loaded after the application object is created:
+# See http://flask.pocoo.org/docs/patterns/packages/
 import marcel.views

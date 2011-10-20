@@ -1,3 +1,7 @@
+"""
+  A port of Django's django.utils.timesince to Flask-Babel
+  https://raw.github.com/django/django/master/LICENSE
+"""
 import datetime
 
 from flaskext.babel import gettext, ngettext, to_user_timezone

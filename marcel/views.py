@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+    Marcel views
+
+    :copyright: (c) 2011 By Ori Livneh
+    :license: BSD, see LICENSE for more details.
+"""
+   
 from flask import (
     abort,
     flash,
@@ -16,12 +24,26 @@ from marcel.forms import EntryForm
 from marcel.models import User, offers, requests, EntryManager
 
 
+#
+# Contexts
+#
+
+# Make the authentication status available in template contexts
+@app.context_processor
+def inject_authentication_status():
+    return dict(authenticated=hasattr(g.user, 'uuid'))
+
+# Embed the current user (if any) in the request context
 @app.before_request
 def lookup_current_user():
     g.user = None
     if 'openid' in session:
         g.user = User(openid=session['openid'])
 
+
+#
+# Login Views
+#
 
 @app.route('/login', methods=['GET', 'POST'])
 @oid.loginhandler
@@ -59,6 +81,10 @@ def after_login(resp):
     return redirect(oid.get_next_url())
 
 
+#
+# Entry Views
+#
+
 class EntryAPI(MethodView):
     def get(self):
         form = EntryForm()
@@ -87,21 +113,3 @@ class EntryAPI(MethodView):
 
 
 app.add_url_rule('/', view_func=EntryAPI.as_view('entries'))
-
-
-@app.context_processor
-def inject_authentication_status():
-    return dict(authenticated=hasattr(g.user, 'uuid'))
-
-
-@app.route('/debug/alerts')
-def debug_alerts():
-    flash("This seems to have worked!")
-    return redirect('/')
-
-
-@app.route('/debug/redis')
-def redis_debug():
-    if g.user is None:
-        abort(401)
-    return render_template('redis_debug.html', info=redis.info())

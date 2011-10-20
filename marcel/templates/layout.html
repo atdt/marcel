@@ -1,4 +1,5 @@
 {# vim: set ts=2 sw=2 filetype=htmljinja: #}
+{# Basic skeleton for all pages on Marcel #}
 <!doctype html>
 <head>
   <meta charset=utf-8>
@@ -15,19 +16,12 @@
     {% block body %}{% endblock %}
   </div>
   <aside>
+    {# Display any alert messages dispatched using Flask's flash() #}
     {% for category, msg in get_flashed_messages(with_categories=true) %}
       <p class=flash-{{ category }}>{{ msg }}</p>
     {% endfor %}
   </aside>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      $('.flash-message').delay(1000).fadeOut('slow');
-    });
-    $('article header').click(function() {
-      $('article header').not(this).next().slideUp();
-      $(this).next().slideToggle();
-    });
-  </script>
+  <script src="/static/marcel.js"></script>
 </body>
 </html>

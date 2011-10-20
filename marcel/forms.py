@@ -1,7 +1,17 @@
-from flaskext.wtf import (Form, SelectField, TextAreaField, TextField,
-                          validators)
+# -*- coding: utf-8 -*-
+"""
+    HTML form definitions for Marcel
 
-from marcel.models import EntryManager
+    :copyright: (c) 2011 By Ori Livneh
+    :license: BSD, see LICENSE for more details.
+"""
+from flaskext.wtf import (
+    Form,
+    SelectField,
+    TextAreaField,
+    TextField,
+    validators
+)
 
 
 class EntryForm(Form):

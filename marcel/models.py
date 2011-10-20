@@ -28,7 +28,7 @@ class User(object):
         return redis.hgetall(self.key)
 
     def set(self, **kwargs):
-        redis.hmset(self.key, {key: val for key, val in kwargs if val})
+        redis.hmset(self.key, {key: val for key, val in kwargs.items() if val})
 
 
 class EntryManager(object):

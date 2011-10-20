@@ -1,19 +1,13 @@
 {# vim: set ts=2 sw=2 filetype=htmljinja: #}
 <article class="entry {{ entry.type }}">
   <header>
-    <h1>{{ entry.summary }}</h1>
+    <h1>{{ entry.summary|lower }}</h1>
+    <time pubdate datetime="{{ entry.pubdate.isoformat }}">posted {{ entry.pubdate|timesince }} ago</time>
   </header>
   <div class=entry_body>
     <p>{{ entry.details }}</p>
     <footer>
-      <dl>
-        <dt> Score </dt>
-        <dd> {{ entry.score }} </dd>
-        <dt> Contact Info
-        <dd> <address>{{ entry.contact_info }}</address> </dd>
-        <dt> Posted </dt>
-        <dd> <time pubdate datetime="{{ entry.pubdate.isoformat }}">Posted {{ entry.pubdate|timesince }} ago</time> </dd>
-      </dl>
+    <address>{{ entry.contact_info }}</address>
     </footer>
   <div class=entry_body>
 </article>

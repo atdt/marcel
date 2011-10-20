@@ -25,7 +25,7 @@
       $('.flash-message').delay(1000).fadeOut('slow');
     });
     $('article header').click(function() {
-      $('div.entry_body').slideUp();
+      $('article header').not(this).next().slideUp();
       $(this).next().slideToggle();
     });
   </script>

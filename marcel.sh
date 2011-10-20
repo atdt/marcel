@@ -1,7 +1,7 @@
 #!/bin/env bash
 # functions and aliases
 function resetapp () {
-    python -c "import marcel;print marcel.add_dummy_data() is None"
+    python -c "import marcel;print marcel.reset() is None"
 }
 
 function epio-redis () {

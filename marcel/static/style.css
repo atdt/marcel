@@ -35,6 +35,8 @@ section h1 {
 article.entry {
   padding: 8px;
   margin: 16px 0;
+  font-size: 24px;
+  font-weight: nro
 }
 
 article header {
@@ -56,6 +58,14 @@ article.request {
 
 article.request h1 {
   color: #fff;
+}
+
+article.offer div.entry_body p {
+  color: #293137;
+}
+
+article.request div.entry_body p {
+  color: #f2c288;
 }
 
 article.offer {
@@ -103,3 +113,4 @@ input, textarea, select {
 textarea {
   width: 99%;
 }
+

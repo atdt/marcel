@@ -61,21 +61,8 @@ class EntryManager(object):
 
     def all(self):
         """ Gets all records of type self.type """
-        # TODO(Ori): This is a sorted set because I initially thought it'd be
-        # neat to allow users to vote on requests, but then I had second
-        # thoughts. We should decide if we want to keep this a sorted set.
-        keys = redis.zrevrange(
-            name="marcel:%s" % self.type,
-            start=0,
-            num=-1,
-            withscores=True,
-            score_cast_func=int
-        )
-        items = []
-        for uid, score in keys:
-            item = self.get(uid)
-            item['score'] = score  # annotate with score
-            items.append(item)
+        keys = redis.lrange(name="marcel:%s" % self.type, start=0, end=-1)
+        items = [self.get(uid) for uid in keys]
         return items
 
     def add(self, user, summary, details, contact_info, pubdate=None):
@@ -84,7 +71,7 @@ class EntryManager(object):
             pubdate = datetime.now().isoformat()
         # TODO(Ori): Should we batch these into a single transaction?
         uid = redis.incr("marcel:%s:next_uid" % self.type)
-        redis.zadd("marcel:%s" % self.type, uid, 0)
+        redis.rpush("marcel:%s" % self.type, uid)
         redis.hmset("marcel:%s:%s" % (self.type, uid), {
             'user': user.uuid,
             'summary': summary,
@@ -93,10 +80,6 @@ class EntryManager(object):
             'pubdate': pubdate
         })
         return uid
-
-    def upvote(self, uid):
-        # Increments an entry's score by 1. See comment above regarding voting.
-        return redis.zincrby("marcel:%s" % self.type, uid, 1)
 
 # Initialize managers for the two types of entries we have:
 requests = EntryManager("request")

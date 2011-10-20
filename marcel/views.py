@@ -28,11 +28,14 @@ def lookup_current_user():
 def login():
     if g.user is not None:
         return redirect(oid.get_next_url())
-    if request.method == 'POST':
+    providers = app.config['OPENID_PROVIDERS']
+    openid = None
+    if request.method == 'GET' and 'provider' in request.args:
+        openid = providers.get(request.args.get('provider'))
+    elif request.method == 'POST':
         openid = request.form.get('openid')
-        ask_for = ['email', 'fullname', 'nickname']  # from openid provider
-        if openid:
-            return oid.try_login(openid, ask_for=ask_for)
+    if openid:
+        return oid.try_login(openid, ask_for=['email'])
     return render_template('login.html',
                             next=oid.get_next_url(),
                             error=oid.fetch_error())
@@ -50,7 +53,7 @@ def after_login(resp):
     session['openid'] = resp.identity_url
     user = User(openid=resp.identity_url)
     if not user.exists():
-        user.set(**{key: val for key, val in resp.__dict__.items() if val})
+        user.set(identity_url=resp.identity_url, email=resp.email)
     flash('Successfully signed in')
     g.user = user
     return redirect(oid.get_next_url())
@@ -68,7 +71,7 @@ class EntryAPI(MethodView):
         form = EntryForm()
         if form.validate():
             flash("Success")
-            entry_manager = EntryManager(form.entrytype.data)
+            entry_manager = EntryManager(form.entry_type.data)
             entry_manager.add(
                 user=g.user,
                 summary=form.summary.data,

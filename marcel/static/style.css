@@ -2,20 +2,24 @@
 
 h1 {
   font-family: 'Ubuntu', sans-serif;
-  font-size: 48px;
   font-weight: 400;
-  line-height: 52px;
 }
 
-div#container header h1 {
+div#container > header > h1 {
+  font-size: 72px;
+  line-height: 52px;
   color: #f38630;
 }
 
 body {
-  font-family: Georgia, serif;
-  font-size: 17px;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Trebuchet MS", Helvetica, Arial, Verdana, sans-serif;
+  font-size: 13px;
   margin: 0;
   padding: 0;
+}
+
+div.entry_body {
+  display: none;
 }
 
 div#container {
@@ -25,21 +29,39 @@ div#container {
 }
 
 section h1 {
-  font-size: 24px;
+  font-size: 48px;
 }
 
 article.entry {
-  -webkit-border-radius: 24px;
-  -moz-border-radius: 24px;
-  border-radius: 24px;
   padding: 8px;
   margin: 16px 0;
 }
 
-article.request {
-  background: #deebf3;
+article header {
+  cursor: pointer;
 }
 
+article.entry h1 {
+  margin: 0;
+  color: #4c4a52;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 24px;
+}
+
+article.request {
+  background: #0e2f59;
+  color: #cec7d1;
+}
+
+article.request h1 {
+  color: #fff;
+}
+
+article.offer {
+  background: #eaecec;
+  color: #86a0b7;
+}
 article header h1 {
   font-size: 16px;
 }
@@ -57,6 +79,7 @@ p[class^="flash"] {
     top: 0;
     width: 400px;
     z-index: 1000;
+    font-size: 17px;
 }
 
 label small {

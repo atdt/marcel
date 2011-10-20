@@ -34,6 +34,11 @@ redis.error = RedisError  # for convenience's sake; use in try/except
 redis_store_factory = lambda: RedisStore(key_prefix='marcel:oid', conn=redis)
 oid = OpenID(app, store_factory=redis_store_factory)
 
+app.config['OPENID_PROVIDERS'] = {
+    'google': 'https://www.google.com/accounts/o8/id',
+    'yahoo': 'https://yahoo.com/',
+}
+
 babel = Babel(app)
 app.jinja_env.filters['format_datetime'] = format_datetime
 app.jinja_env.filters['timesince'] = timesince

@@ -19,8 +19,15 @@
       <p class=flash-{{ category }}>{{ msg }}</p>
     {% endfor %}
   </aside>
-  {% if authenticated %}
-    <aside>You are logged in as {{ g.user.uuid }}</aside>
-  {% endif %}
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('.flash-message').delay(1000).fadeOut('slow');
+    });
+    $('article header').click(function() {
+      $('div.entry_body').slideUp();
+      $(this).next().slideToggle();
+    });
+  </script>
 </body>
 </html>

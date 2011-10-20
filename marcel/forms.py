@@ -6,7 +6,7 @@ from marcel.models import EntryManager
 
 class EntryForm(Form):
     """ Represents an HTML form for a Marcel entry """
-    entrytype = SelectField(
+    entry_type = SelectField(
         label='Type of Entry',
         choices=[('request', 'I have a request'),
                  ('offer', 'I have something to offer')]

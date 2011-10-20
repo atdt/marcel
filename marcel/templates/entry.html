@@ -3,16 +3,17 @@
   <header>
     <h1>{{ entry.summary }}</h1>
   </header>
-  <p>{{ entry.details }}</p>
-  <!-- {{ entry.user_id }} -->
-  <footer>
-    <dl>
-      <dt> Score </dt>
-      <dd> {{ entry.score }} </dd>
-      <dt> Contact Info
-      <dd> <address>{{ entry.contact_info }}</address> </dd>
-      <dt> Posted </dt>
-      <dd> <time pubdate datetime="{{ entry.pubdate.isoformat }}">Posted {{ entry.pubdate|timesince }} ago</time> </dd>
-    </dl>
-  </footer>
+  <div class=entry_body>
+    <p>{{ entry.details }}</p>
+    <footer>
+      <dl>
+        <dt> Score </dt>
+        <dd> {{ entry.score }} </dd>
+        <dt> Contact Info
+        <dd> <address>{{ entry.contact_info }}</address> </dd>
+        <dt> Posted </dt>
+        <dd> <time pubdate datetime="{{ entry.pubdate.isoformat }}">Posted {{ entry.pubdate|timesince }} ago</time> </dd>
+      </dl>
+    </footer>
+  <div class=entry_body>
 </article>

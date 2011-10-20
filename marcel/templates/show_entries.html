@@ -18,19 +18,20 @@
   {%- endfor %}
 </section>
 <section>
-  <h1>Add an entry</h1>
   {% if authenticated %}
+    <h1>Add an entry</h1>
     {% from "_formhelpers.html" import render_field %}
     <form method=post>
       {{ form.csrf }}
-      {{ render_field(form.entrytype) }}
+      {{ render_field(form.entry_type) }}
       {{ render_field(form.summary) }}
       {{ render_field(form.details) }}
       {{ render_field(form.contact_info) }}
       <button>Add entry</button>
     </form>
   {% else %}
-    You must sign in.
+    <h1>Sign in</h1>
+    {% include "login.html" %}
   {% endif %}
 </section>
 {% endblock %}

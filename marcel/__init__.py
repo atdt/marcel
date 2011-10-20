@@ -5,7 +5,7 @@
     A simple web app for facilitating the free exchange of goods and services.
 
     :copyright: (c) 2011 By Ori Livneh
-    :license: BSD, see LICENSE for more details.
+    :license: GPLv3, see LICENSE for more details.
 """
 from flask import Flask
 from flaskext.babel import Babel, format_datetime

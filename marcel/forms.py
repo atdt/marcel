@@ -3,7 +3,7 @@
     HTML form definitions for Marcel
 
     :copyright: (c) 2011 By Ori Livneh
-    :license: BSD, see LICENSE for more details.
+    :license: GPLv3, see LICENSE for more details.
 """
 from flaskext.wtf import (
     Form,

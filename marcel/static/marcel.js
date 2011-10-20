@@ -1,7 +1,7 @@
 // Javascript code for Marcel. Requires jQuery >= 1.4.3
 //
 //  :copyright: (c) 2011 by Ori Livneh
-//  :license: BSD, see LICENSE for more details.
+//  :license: GPLv3, see LICENSE for more details.
 (function ($) {
     $(document).ready(function() {
         // Fade out any alerts after a delay
